@@ -4,7 +4,7 @@ RDMA-based RPC using pybind11
 
 from __future__ import annotations
 
-__all__ = ["Client", "start_server"]
+__all__ = ["Client", "start_server", "stop_server"]
 
 class Client:
     def __init__(self, host: str, port: str = "7471") -> None: ...
@@ -21,4 +21,9 @@ class Client:
 def start_server(port: str = "7471") -> None:
     """
     Start the RDMA RPC server in a background thread
+    """
+
+def stop_server() -> None:
+    """
+    Stop the RDMA RPC server if running
     """

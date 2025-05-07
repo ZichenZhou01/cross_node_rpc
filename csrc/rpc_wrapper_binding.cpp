@@ -29,6 +29,12 @@ void start_server(const std::string& port) {
     server_thread.detach();
 }
 
+void stop_server() {
+    stop_flag = true;
+    if (server_thread.joinable())
+        server_thread.join();
+}
+
 RpcClientWrapper::RpcClientWrapper(const std::string& host, const std::string& port) {
     signal(SIGINT, signal_handler);
 

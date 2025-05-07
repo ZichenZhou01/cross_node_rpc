@@ -6,6 +6,8 @@
 #include <infiniband/verbs.h>
 #include <rdma/rdma_cma.h>
 
+extern std::atomic<bool> stop_flag;
+
 // Signal handler to set stop flag
 void signal_handler(int signum);
 

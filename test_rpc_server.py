@@ -1,12 +1,14 @@
-import torch
+import signal
 import rpc_rdma
 import time
-rpc_rdma.start_server(port="7471")
 
+def handle_sigint(sig, frame):
+    print("Stopping server...")
+    rpc_rdma.stop_server()
+    exit(0)
+
+signal.signal(signal.SIGINT, handle_sigint)
+
+rpc_rdma.start_server("7471")
 while True:
-    try:
-        # Simulate server activity
-        time.sleep(5)  # Sleep for a while to simulate work
-    except KeyboardInterrupt:
-        print("Server stopped.")
-        break
+    time.sleep(5)

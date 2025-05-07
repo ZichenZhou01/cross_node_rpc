@@ -13,8 +13,8 @@
 #include <rdma/rdma_cma.h>
 #include "rpc_helper.h"
 
-std::atomic<bool> stop_flag;
 std::atomic<uint32_t> next_req_id;
+std::atomic<bool> stop_flag = false;
 
 void signal_handler(int) {
     stop_flag = true;

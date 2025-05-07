@@ -13,6 +13,7 @@
 
 // Starts the RDMA-based RPC server on the given port (default 7471)
 void start_server(const std::string& port = "7471");
+void stop_server();
 
 class RpcClientWrapper {
 public:
