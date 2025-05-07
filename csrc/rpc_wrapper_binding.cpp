@@ -36,7 +36,6 @@ void stop_server() {
 }
 
 RpcClientWrapper::RpcClientWrapper(const std::string& host, const std::string& port) {
-    signal(SIGINT, signal_handler);
 
     ec = rdma_create_event_channel();
     if (!ec) throw std::runtime_error("rdma_create_event_channel failed");

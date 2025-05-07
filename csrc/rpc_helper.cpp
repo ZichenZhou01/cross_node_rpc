@@ -248,8 +248,6 @@ std::vector<char> RpcService::handleAdd(const char* in, uint16_t len) {
 
 // --- run_server & run_client --------------------------------
 int run_server(const char* port) {
-    signal(SIGINT, signal_handler);
-
     rdma_event_channel* ec = rdma_create_event_channel();
     if (!ec) throw std::runtime_error("rdma_create_event_channel");
     rdma_cm_id* listener;
@@ -301,8 +299,6 @@ int run_server(const char* port) {
 }
 
 int run_client(const char* host, const char* port) {
-    signal(SIGINT, signal_handler);
-
     rdma_event_channel* ec = rdma_create_event_channel();
     if (!ec) throw std::runtime_error("rdma_create_event_channel");
 
