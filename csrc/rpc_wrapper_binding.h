@@ -19,7 +19,7 @@ public:
     RpcClientWrapper(const std::string& host, const std::string& port = "7471");
     std::string echo(const std::string& msg);
     int add(int a, int b);
-    // ~RpcClientWrapper();
+    ~RpcClientWrapper();
 
 private:
     rdma_event_channel* ec;

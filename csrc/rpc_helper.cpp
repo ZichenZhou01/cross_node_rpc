@@ -20,6 +20,18 @@ void signal_handler(int) {
     stop_flag = true;
 }
 
+// --- Event‐helper --------------------------------
+void wait_event(rdma_event_channel* ec, rdma_cm_id* id, rdma_cm_event_type expect) {
+    rdma_cm_event* ev;
+    while (!stop_flag && rdma_get_cm_event(ec, &ev) == 0) {
+        if (ev->id == id && ev->event == expect) {
+            rdma_ack_cm_event(ev);
+            return;
+        }
+        rdma_ack_cm_event(ev);
+    }
+}
+
 // --- RDMA Transport Layer --------------------------------
 
 RdmaTransport::RdmaTransport(rdma_cm_id* id, size_t buf_size)
@@ -27,18 +39,18 @@ RdmaTransport::RdmaTransport(rdma_cm_id* id, size_t buf_size)
     init();
 }
 
-// RdmaTransport::~RdmaTransport() {
-//     if (mr)     ibv_dereg_mr(mr);
-//     if (qp)     rdma_destroy_qp(cmId);
-//     if (sendCq) ibv_destroy_cq(sendCq);
-//     if (recvCq) ibv_destroy_cq(recvCq);
-//     if (pd)     ibv_dealloc_pd(pd);
-//     if (cmId) {
-//         rdma_disconnect(cmId);
-//         rdma_destroy_id(cmId);
-//     }
-//     if (ec)     rdma_destroy_event_channel(ec);
-// }
+RdmaTransport::~RdmaTransport() {
+    if (mr)     ibv_dereg_mr(mr);
+    if (qp)     rdma_destroy_qp(cmId);
+    if (sendCq) ibv_destroy_cq(sendCq);
+    if (recvCq) ibv_destroy_cq(recvCq);
+    if (pd)     ibv_dealloc_pd(pd);
+    if (cmId) {
+        rdma_disconnect(cmId);
+        rdma_destroy_id(cmId);
+    }
+    if (ec)     rdma_destroy_event_channel(ec);
+}
 
 ibv_cq* RdmaTransport::getSendCq() const { return sendCq; }
 ibv_cq* RdmaTransport::getRecvCq() const { return recvCq; }
@@ -232,17 +244,7 @@ std::vector<char> RpcService::handleAdd(const char* in, uint16_t len) {
 }
 
 
-// --- Event‐helper --------------------------------
-void wait_event(rdma_event_channel* ec, rdma_cm_id* id, rdma_cm_event_type expect) {
-    rdma_cm_event* ev;
-    while (!stop_flag && rdma_get_cm_event(ec, &ev) == 0) {
-        if (ev->id == id && ev->event == expect) {
-            rdma_ack_cm_event(ev);
-            return;
-        }
-        rdma_ack_cm_event(ev);
-    }
-}
+
 
 // --- run_server & run_client --------------------------------
 int run_server(const char* port) {

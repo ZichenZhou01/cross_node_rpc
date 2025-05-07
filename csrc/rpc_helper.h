@@ -31,7 +31,7 @@ enum {
 class RdmaTransport {
 public:
     RdmaTransport(rdma_cm_id* id, size_t buf_size = 1024);
-    // ~RdmaTransport();
+    ~RdmaTransport();
 
     ibv_cq* getSendCq() const;
     ibv_cq* getRecvCq() const;
