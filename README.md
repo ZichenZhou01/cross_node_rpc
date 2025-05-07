@@ -26,12 +26,12 @@ Find the relevant IP addr on the client server
 
 Machine 0: Run
 ```
-python3 test_rpc_server.py
+python3 rpc_server.py
 ```
 
 Machine 1: Run
 ```
-python3 test_client.py
+python3 client.py
 ```
 Change the IP address within test_client to use the ip address for the other machine
 
