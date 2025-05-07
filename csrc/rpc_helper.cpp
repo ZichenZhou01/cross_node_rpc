@@ -130,7 +130,7 @@ void RdmaTransport::init() {
     qp = cmId->qp;
 
     mr = ibv_reg_mr(pd, buf.data(), buf.size(),
-                    IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE);
+        IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_REMOTE_READ);
     if (!mr)
         throw std::runtime_error("ibv_reg_mr failed");
 }
