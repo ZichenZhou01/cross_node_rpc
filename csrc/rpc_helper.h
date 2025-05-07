@@ -5,6 +5,7 @@
 #include <vector>
 #include <infiniband/verbs.h>
 #include <rdma/rdma_cma.h>
+#include "rpc_handlers.h"
 
 extern std::atomic<bool> stop_flag;
 

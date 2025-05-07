@@ -199,17 +199,19 @@ void RpcService::serve_loop() {
 
         char* inPayload = buf + sizeof(RpcHeader);
         std::vector<char> out;
-
-        switch (reqHdr->opcode) {
-            case RPC_ECHO:
-                out = handleEcho(inPayload, inLen);
-                break;
-            case RPC_ADD:
-                out = handleAdd(inPayload, inLen);
-                break;
-            default:
-                continue;
-        }
+        out = dispatch_rpc(reqHdr->opcode, inPayload, inLen);
+        if (out.empty()) continue;
+    
+        // switch (reqHdr->opcode) {
+        //     case RPC_ECHO:
+        //         out = handleEcho(inPayload, inLen);
+        //         break;
+        //     case RPC_ADD:
+        //         out = handleAdd(inPayload, inLen);
+        //         break;
+        //     default:
+        //         continue;
+        // }
 
         if (out.size() > std::numeric_limits<uint16_t>::max())
             throw std::runtime_error("Response too large");
