@@ -27,18 +27,18 @@ RdmaTransport::RdmaTransport(rdma_cm_id* id, size_t buf_size)
     init();
 }
 
-RdmaTransport::~RdmaTransport() {
-    if (mr)     ibv_dereg_mr(mr);
-    if (qp)     rdma_destroy_qp(cmId);
-    if (sendCq) ibv_destroy_cq(sendCq);
-    if (recvCq) ibv_destroy_cq(recvCq);
-    if (pd)     ibv_dealloc_pd(pd);
-    if (cmId) {
-        rdma_disconnect(cmId);
-        rdma_destroy_id(cmId);
-    }
-    if (ec)     rdma_destroy_event_channel(ec);
-}
+// RdmaTransport::~RdmaTransport() {
+//     if (mr)     ibv_dereg_mr(mr);
+//     if (qp)     rdma_destroy_qp(cmId);
+//     if (sendCq) ibv_destroy_cq(sendCq);
+//     if (recvCq) ibv_destroy_cq(recvCq);
+//     if (pd)     ibv_dealloc_pd(pd);
+//     if (cmId) {
+//         rdma_disconnect(cmId);
+//         rdma_destroy_id(cmId);
+//     }
+//     if (ec)     rdma_destroy_event_channel(ec);
+// }
 
 ibv_cq* RdmaTransport::getSendCq() const { return sendCq; }
 ibv_cq* RdmaTransport::getRecvCq() const { return recvCq; }

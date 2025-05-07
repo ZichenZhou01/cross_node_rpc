@@ -75,9 +75,9 @@ int RpcClientWrapper::add(int a, int b) {
     return sum;
 }
 
-RpcClientWrapper::~RpcClientWrapper() {
-    rdma_disconnect(cmId);
-    rdma_destroy_id(cmId);
-    rdma_destroy_event_channel(ec);
-}
+// RpcClientWrapper::~RpcClientWrapper() {
+//     rdma_disconnect(cmId);
+//     rdma_destroy_id(cmId);
+//     rdma_destroy_event_channel(ec);
+// }
 
