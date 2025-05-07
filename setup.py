@@ -82,10 +82,10 @@ class BuildExtWithStubs(BuildExtension):
             os.environ["LD_LIBRARY_PATH"] = f"{torch_lib_path}:{ld_library_path}"
 
             subprocess.run(
-                [sys.executable, "-m", "pybind11_stubgen", "rpc_rdma_util", "--output-dir", "."],
+                [sys.executable, "-m", "pybind11_stubgen", "rpc_rdma", "--output-dir", "."],
                 check=True,
             )
-            stub = "rpc_rdma_util.pyi"
+            stub = "rpc_rdma.pyi"
             if os.path.exists(stub):
                 logger.info(f"Formatting {stub} with black…")
                 subprocess.run(["black", stub], check=True)
@@ -94,7 +94,7 @@ class BuildExtWithStubs(BuildExtension):
 
 
 setup(
-    name="rpc_rdma_util",
+    name="rpc_rdma",
     version="0.0.2",
     description="PyTorch C++/CUDA RDMA-enabled extension",
     packages=find_packages(),

@@ -18,9 +18,13 @@ void start_server(const std::string& port) {
         throw std::runtime_error("Server already running");
     server_running = true;
     server_thread = std::thread([port](){
-        int ret = run_server(port.c_str());
-        if (ret != 0)
-            throw std::runtime_error("Server exited with error");
+        try {
+            int ret = run_server(port.c_str());
+            if (ret != 0)
+                std::fprintf(stderr, "Server exited with error code %d\n", ret);
+        } catch (const std::exception& ex) {
+            std::fprintf(stderr, "Server thread exception: %s\n", ex.what());
+        }
     });
     server_thread.detach();
 }
@@ -52,11 +56,13 @@ RpcClientWrapper::RpcClientWrapper(const std::string& host, const std::string& p
     wait_event(ec, cmId, RDMA_CM_EVENT_ROUTE_RESOLVED);
 
     transport = std::make_unique<RdmaTransport>(cmId);
+    transport->postReceive();
     rpc = std::make_unique<RpcService>(*transport);
 
     if (rdma_connect(cmId, nullptr))
         throw std::runtime_error("rdma_connect failed");
     wait_event(ec, cmId, RDMA_CM_EVENT_ESTABLISHED);
+    printf("Connected to server\n");
 }
 
 std::string RpcClientWrapper::echo(const std::string& msg) {

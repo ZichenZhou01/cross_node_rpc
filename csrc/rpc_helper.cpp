@@ -142,23 +142,28 @@ std::vector<char> RpcService::call(uint16_t opcode, const void* payload, uint16_
     if (len + sizeof(RpcHeader) > transport.capacity())
         throw std::runtime_error("RPC payload too large");
 
-    std::vector<char> req(sizeof(RpcHeader) + len);
     RpcHeader hdr{};
     hdr.request_id  = next_req_id++;
     hdr.opcode      = opcode;
     hdr.payload_len = len;
 
-    std::memcpy(req.data(), &hdr, sizeof(hdr));
-    std::memcpy(req.data() + sizeof(hdr), payload, len);
+    // Use RDMA registered buffer
+    char* buf = transport.data();
+    std::memcpy(buf, &hdr, sizeof(hdr));
+    std::memcpy(buf + sizeof(hdr), payload, len);
 
+    // Post receive for response
     transport.postReceive();
-    transport.postSend(req.data(), req.size());
+
+    // Post send using registered buffer
+    transport.postSend(buf, sizeof(hdr) + len);
+
+    // Wait for send and receive completions
     transport.pollCompletion(transport.getSendCq());
     transport.pollCompletion(transport.getRecvCq());
 
-    char* buf = transport.data();
+    // Read and validate response
     RpcHeader* respHdr = reinterpret_cast<RpcHeader*>(buf);
-
     if (respHdr->payload_len > transport.capacity())
         throw std::runtime_error("Response payload too large");
 
@@ -268,6 +273,7 @@ int run_server(const char* port) {
         if (ev->event == RDMA_CM_EVENT_CONNECT_REQUEST) {
             rdma_cm_id* clientId = ev->id;
             rdma_ack_cm_event(ev);
+            std::printf("Received connection request\n");
 
             auto* ctx = new RdmaTransport(clientId);
             RpcService rpc(*ctx);
@@ -276,6 +282,7 @@ int run_server(const char* port) {
             if (rdma_accept(clientId, nullptr))
                 throw std::runtime_error("rdma_accept failed");
             wait_event(ec, clientId, RDMA_CM_EVENT_ESTABLISHED);
+            std::printf("Connection established\n");
 
             std::thread([ctx,&rpc](){
                 rpc.serve_loop();
