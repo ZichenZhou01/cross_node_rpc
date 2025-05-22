@@ -33,11 +33,10 @@ for _ in range(10):
     )
     end_time = time.time()
 
-    exchange_time = (end_time - start_time) * 1000
+    exchange_time = (end_time - start_time) * 10000
 
     if received_addr2 != 0:
-        print(f"\nExchange completed in {exchange_time:.1f} ms")
-        print(f"\nUsed provided buffer: 0x{received_addr2:x}")
+        print(f"\nExchange completed in {exchange_time:.4f} ms")
         print(f"\nBuffer matches: {received_addr2 == client_recv_tensor.data_ptr()}")
         
     else:
