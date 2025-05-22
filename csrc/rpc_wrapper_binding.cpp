@@ -97,6 +97,63 @@ int RpcClientWrapper::mul(int a, int b, int c) {
     return mul;
 }
 
+uint64_t RpcClientWrapper::exchange_gpu_data(uint64_t send_gpu_addr, uint64_t send_size, 
+    uint64_t recv_size, uint64_t recv_gpu_addr = 0) {
+    
+    SendRecvRequest request = {};
+    request.request_id = request_counter_++;
+    request.send_size = send_size;
+    request.recv_size = recv_size;
+    request.send_gpu_addr = send_gpu_addr;
+    request.recv_gpu_addr = recv_gpu_addr;
+
+    auto resp = rpc->call(RPC_NCCL_TRANS, &request, sizeof(request));
+    if (resp.size() != sizeof(SendRecvResponse)) 
+        throw std::runtime_error("Invalid nccl exchange response size");
+
+    SendRecvResponse response;
+    std::memcpy(&response, resp.data(), sizeof(response));
+
+    if (response.status != 0) {
+        printf("Server error: %s\n", response.message);
+        return 0;
+    }
+
+    if (!SendRecvNCCL::getInstance().initialize(1)) {
+        printf("Failed to initialize client NCCL\n");
+        return 0;
+    }
+
+    void* client_recv_buffer = nullptr;
+    if (recv_gpu_addr != 0) {
+        client_recv_buffer = reinterpret_cast<void*>(recv_gpu_addr);
+    } else {
+        cudaError_t cuda_result = cudaMalloc(&client_recv_buffer, recv_size * sizeof(__half));
+        if (cuda_result != cudaSuccess) {
+            printf("Failed to allocate client receive buffer: %s\n", cudaGetErrorString(cuda_result));
+            return 0;
+        }
+    }
+
+    void* client_send_buffer = reinterpret_cast<void*>(send_gpu_addr);
+    bool success = SendRecvNCCL::getInstance().exchangeData(
+        client_send_buffer, send_size,    
+        client_recv_buffer, recv_size,      
+        0 
+    );
+    
+    if (success) {
+        printf("Client-Server GPU exchange completed!\n");
+        return reinterpret_cast<uint64_t>(client_recv_buffer);
+    } else {
+        printf("Client-Server GPU exchange failed\n");
+        if (recv_gpu_addr == 0) {
+            cudaFree(client_recv_buffer);
+        }
+        return 0;
+    }
+}
+
 RpcClientWrapper::~RpcClientWrapper() {
     std::fprintf(stderr, "RpcClientWrapper destructor called\n");
     rdma_disconnect(cmId);

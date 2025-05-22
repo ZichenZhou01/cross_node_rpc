@@ -15,5 +15,10 @@ PYBIND11_MODULE(rpc_rdma, m) {
         .def(py::init<const std::string&, const std::string&>(), py::arg("host"), py::arg("port") = "7471")
         .def("echo", &RpcClientWrapper::echo, "Send an echo RPC and receive the response")
         .def("add", &RpcClientWrapper::add, "Send an add RPC and receive the sum")
-        .def("mul", &RpcClientWrapper::mul, "Send an mul RPC and receive the multiplication result");
+        .def("mul", &RpcClientWrapper::mul, "Send an mul RPC and receive the multiplication result")
+        .def("exchange_gpu_data", &RpcClientWrapper::exchange_gpu_data,
+            py::arg("send_gpu_addr"), py::arg("send_size"), py::arg("recv_size"), 
+            py::arg("recv_gpu_addr") = 0,
+            "Exchange GPU data with server using NCCL SendRecv");
+
 }

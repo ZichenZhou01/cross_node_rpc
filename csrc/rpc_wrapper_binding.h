@@ -21,6 +21,8 @@ public:
     std::string echo(const std::string& msg);
     int add(int a, int b);
     int mul(int a, int b, int c);
+    uint64_t exchange_gpu_data(uint64_t send_gpu_addr, uint64_t send_size, 
+        uint64_t recv_size, uint64_t recv_gpu_addr = 0);
     ~RpcClientWrapper();
 
 private:
@@ -28,4 +30,5 @@ private:
     rdma_cm_id* cmId;
     std::unique_ptr<RdmaTransport> transport;
     std::unique_ptr<RpcService> rpc;
+    uint32_t request_counter_;
 };
