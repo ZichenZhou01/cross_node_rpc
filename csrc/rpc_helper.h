@@ -25,10 +25,10 @@ struct RpcHeader {
 #pragma pack(pop)
 
 // RPC operations
-enum {
-    RPC_ECHO = 1,
-    RPC_ADD  = 2
-};
+// enum {
+//     RPC_ECHO = 1,
+//     RPC_ADD  = 2
+// };
 
 // Low-level RDMA transport
 class RdmaTransport {

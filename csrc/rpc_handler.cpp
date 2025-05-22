@@ -1,11 +1,11 @@
 #include "rpc_handlers.h"
 #include <cstring>
 
-static std::vector<char> handleEcho(const char* in, uint16_t len) {
+std::vector<char> handleEcho(const char* in, uint16_t len) {
     return std::vector<char>(in, in + len);
 }
 
-static std::vector<char> handleAdd(const char* in, uint16_t len) {
+std::vector<char> handleAdd(const char* in, uint16_t len) {
     if (len < 2 * sizeof(int)) return {};
     int a, b;
     std::memcpy(&a, in,             sizeof(a));
