@@ -14,6 +14,6 @@ PYBIND11_MODULE(rpc_rdma, m) {
     py::class_<RpcClientWrapper>(m, "Client")
         .def(py::init<const std::string&, const std::string&>(), py::arg("host"), py::arg("port") = "7471")
         .def("echo", &RpcClientWrapper::echo, "Send an echo RPC and receive the response")
-        .def("add", &RpcClientWrapper::add, "Send an add RPC and receive the sum");
+        .def("add", &RpcClientWrapper::add, "Send an add RPC and receive the sum")
         .def("mul", &RpcClientWrapper::mul, "Send an mul RPC and receive the multiplication result");
 }
