@@ -2,24 +2,19 @@
 #include <cstring>
 #include <cstdio>
 
-bool SendRecvNCCL::initialize(uint32_t rank) {
+bool SendRecvNCCL::initialize() {
     if (initialized_) return true;
         
-    rank_ = rank;
-    
-    ncclUniqueId unique_id;
-    memset(&unique_id, 0, sizeof(unique_id));
-    strcpy((char*)&unique_id, "sendrecv_exchange");
-    
-    ncclResult_t result = ncclCommInitRank(&comm_, 2, unique_id, rank);
-    if (result != ncclSuccess) {
-        printf("SendRecv NCCL init failed for rank %d: %s\n", rank, ncclGetErrorString(result));
+    int devs[2] = { 0, 1 };
+
+    ncclResult_t res = ncclCommInitAll(&comm_, 2, devs);
+    if (res != ncclSuccess) {
+        fprintf(stderr, "NCCL initAll failed: %s\n", ncclGetErrorString(res));
         return false;
     }
     
     cudaStreamCreate(&stream_);
     initialized_ = true;
-    printf("SendRecv NCCL initialized for rank %d\n", rank);
     return true;
 }
 
@@ -88,7 +83,7 @@ std::vector<char> handleSendRecv(const char* in, uint16_t len) {
     printf("Client sending: %lu fp16 elements\n", request.send_size);
     printf("Client receiving: %lu fp16 elements\n", request.recv_size);
 
-    if (!SendRecvNCCL::getInstance().initialize(0)) {
+    if (!SendRecvNCCL::getInstance().initialize()) {
         response.status = 1;
         strcpy(response.message, "Server NCCL init failed");
         std::vector<char> out(sizeof(response));

@@ -36,7 +36,7 @@ class SendRecvNCCL {
 
     public:
         SendRecvNCCL() : initialized_(false), rank_(0) {}
-        bool initialize(uint32_t rank);
+        bool initialize();
         bool exchangeData(void* send_buffer, size_t send_count, 
             void* recv_buffer, size_t recv_count, uint32_t peer_rank);
         

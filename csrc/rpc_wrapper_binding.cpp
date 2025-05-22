@@ -119,7 +119,7 @@ uint64_t RpcClientWrapper::exchange_gpu_data(uint64_t send_gpu_addr, uint64_t se
         return 0;
     }
 
-    if (!SendRecvNCCL::getInstance().initialize(1)) {
+    if (!SendRecvNCCL::getInstance().initialize()) {
         printf("Failed to initialize client NCCL\n");
         return 0;
     }
