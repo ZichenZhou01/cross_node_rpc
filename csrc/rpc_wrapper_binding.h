@@ -20,6 +20,7 @@ public:
     RpcClientWrapper(const std::string& host, const std::string& port = "7471");
     std::string echo(const std::string& msg);
     int add(int a, int b);
+    int mul(int a, int b, int c);
     ~RpcClientWrapper();
 
 private:

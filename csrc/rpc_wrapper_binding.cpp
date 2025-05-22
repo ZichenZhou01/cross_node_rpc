@@ -86,6 +86,17 @@ int RpcClientWrapper::add(int a, int b) {
     return sum;
 }
 
+int RpcClientWrapper::mul(int a, int b, int c) {
+    int nums[3] = {a, b, c};
+    auto resp = rpc->call(RPC_MUL, nums, sizeof(nums));
+    if (resp.size() != sizeof(int))
+        throw std::runtime_error("Invalid mul response size");
+
+    int mul;
+    std::memcpy(&mul, resp.data(), sizeof(mul));
+    return mul;
+}
+
 RpcClientWrapper::~RpcClientWrapper() {
     std::fprintf(stderr, "RpcClientWrapper destructor called\n");
     rdma_disconnect(cmId);
