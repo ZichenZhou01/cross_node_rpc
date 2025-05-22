@@ -1,5 +1,6 @@
 #include "rpc_handlers.h"
 #include <cstring>
+#include <cstdio>
 
 bool SendRecvNCCL::initialize(uint32_t rank) {
     if (initialized_) return true;
@@ -136,7 +137,7 @@ std::vector<char> handleSendRecv(const char* in, uint16_t len) {
         cudaFree(server_send_buffer);
         
     }).detach();
-    
+
     std::vector<char> out(sizeof(response));
     std::memcpy(out.data(), &response, sizeof(response));
     return out;
