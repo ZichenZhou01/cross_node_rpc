@@ -50,7 +50,7 @@ class SendRecvNCCL {
         cudaStream_t stream_;
         bool initialized_;
         uint32_t rank_;
-}
+};
 
 std::vector<char> handleEcho(const char* in, uint16_t len);
 std::vector<char> handleAdd(const char* in, uint16_t len);

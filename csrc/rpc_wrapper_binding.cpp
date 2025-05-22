@@ -98,7 +98,7 @@ int RpcClientWrapper::mul(int a, int b, int c) {
 }
 
 uint64_t RpcClientWrapper::exchange_gpu_data(uint64_t send_gpu_addr, uint64_t send_size, 
-    uint64_t recv_size, uint64_t recv_gpu_addr = 0) {
+    uint64_t recv_size, uint64_t recv_gpu_addr) {
     
     SendRecvRequest request = {};
     request.request_id = request_counter_++;
