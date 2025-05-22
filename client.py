@@ -11,7 +11,9 @@ res = client.add(1,3)
 for _ in range(10):
     start_time = time.time()
     res = client.add(1,3)
+    res2 = client.mul(2, 3, 4)
     end_time = time.time()
-    print("Time in microseconds:", (end_time - start_time) * 1e6)
+    print("\n add result is {res}, mul result is {res2}")
+    print("\nTime in microseconds:", (end_time - start_time) * 1e6)
     
 
